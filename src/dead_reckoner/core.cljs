@@ -2,10 +2,16 @@
 
 (println "Program started.")
 
+(defn rotate-compass [rotation]
+  (let [compass-img (.getElementById js/document "compass-img")]
+    (set! (.-transform (.-style compass-img)) (str "rotate(" rotation "deg)"))))
+
 (defn set-bearing [delta]
   (let [bearing (.getElementById js/document "bearing")
         new-value (mod (+ (js/parseInt (.-value bearing)) delta) 360)]
-    (set! (.-value bearing) new-value)))
+    (set! (.-value bearing) new-value)
+    (rotate-compass new-value)
+    ))
 
 (defn set-paces [delta]
   (let [paces (.getElementById js/document "paces")
