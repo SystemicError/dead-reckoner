@@ -18,6 +18,14 @@
         new-value (max (+ (js/parseInt (.-value paces)) delta) 0)]
     (set! (.-value paces) new-value)))
 
+(defn add-segment []
+  (let [segment-list (.getElementById js/document "segment-list")
+        segment (.createElement js/document "p")
+        bearing (.-value (.getElementById js/document "bearing"))
+        paces (.-value (.getElementById js/document "paces"))
+        comment-string (.-value (.getElementById js/document "comment"))]
+    (set! (.-innerHTML segment) (str bearing " " paces " " comment-string))
+    (.appendChild segment-list segment)))
 
 (set! (.-onclick (.getElementById js/document "bearing-dec-30")) #(set-bearing -30))
 (set! (.-onclick (.getElementById js/document "bearing-dec-5")) #(set-bearing -5))
@@ -30,3 +38,5 @@
 (set! (.-onclick (.getElementById js/document "paces-inc-1")) #(set-paces 1))
 (set! (.-onclick (.getElementById js/document "paces-inc-10")) #(set-paces 10))
 (set! (.-onclick (.getElementById js/document "paces-inc-100")) #(set-paces 100))
+
+(set! (.-onclick (.getElementById js/document "add-segment")) add-segment)
