@@ -6,7 +6,7 @@ A clojurescript app to assist in navigation by dead reckoning.
 
 To test:
 
-`clj --main cljs.main --compile hello-world.core --repl`
+`clj --main cljs.main --compile dead-reckoner.core --repl`
 
 To compile:
 
