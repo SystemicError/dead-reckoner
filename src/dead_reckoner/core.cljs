@@ -29,6 +29,18 @@
         {:bearing bearing
          :paces paces}))))
 
+(defn update-navigation [segments]
+  "Update the navigation readouts based on segment data."
+  (let [total-paces (reduce + (map :paces segments))
+        y (reduce + (map #(* (Math/cos (/ (* Math/PI (:bearing %)) 180.0)) (:paces %)) segments))
+        x (reduce + (map #(* (Math/sin (/ (* Math/PI (:bearing %)) 180.0)) (:paces %)) segments))
+        distance-to-start (Math/sqrt (+ (* x x) (* y y)))
+        bearing-to-start (mod (+ 180.0 (/ (* 180.0 (Math/atan2 x y)) Math/PI)) 360)]
+    (set! (.-innerHTML (.getElementById js/document "total-paces")) (str "Total paces:  " total-paces))
+    (set! (.-innerHTML (.getElementById js/document "distance-to-start")) (str "Straight-line distance to start:  " distance-to-start))
+    (set! (.-innerHTML (.getElementById js/document "bearing-to-start")) (str "Bearing to starting position:  " bearing-to-start))
+  ))
+
 (defn add-segment []
   (let [segment-list (.getElementById js/document "segment-list")
         segment (.createElement js/document "tr")
@@ -46,7 +58,7 @@
     (.appendChild segment  td-comment)
     (.appendChild segment-list segment)
     (set! (.-value (.getElementById js/document "comment")) "")
-    (js/console.log (str (read-segments)))))
+    (update-navigation (read-segments))))
 
 (set! (.-onclick (.getElementById js/document "bearing-dec-30")) #(set-bearing -30))
 (set! (.-onclick (.getElementById js/document "bearing-dec-5")) #(set-bearing -5))
