@@ -29,11 +29,18 @@
         {:bearing bearing
          :paces paces}))))
 
-(defn update-map [xs ys]
+(defn update-map
   "Given lists of xs and ys, draw a map of the route."
-  (let [map-canvas (.getElementById js/document "map")]
-    )
-  )
+  ([xs ys] (update-map xs ys 0 0))
+  ([xs ys x y]
+    (let [map-canvas (.getElementById js/document "map")
+          ctx (.getContext map-canvas "2d")]
+      (if (not (empty? xs))
+        (do
+          (.moveTo ctx x y)
+          (.lineTo ctx (+ x (first xs)) (+ y (first ys)))
+          (.stroke ctx)
+          (recur (rest xs) (rest ys) (+ x (first xs)) (+ y (first ys))))))))
 
 (defn update-navigation [segments]
   "Update the navigation readouts based on segment data."
