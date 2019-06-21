@@ -20,12 +20,21 @@
 
 (defn add-segment []
   (let [segment-list (.getElementById js/document "segment-list")
-        segment (.createElement js/document "p")
+        segment (.createElement js/document "tr")
         bearing (.-value (.getElementById js/document "bearing"))
         paces (.-value (.getElementById js/document "paces"))
-        comment-string (.-value (.getElementById js/document "comment"))]
-    (set! (.-innerHTML segment) (str bearing " " paces " " comment-string))
-    (.appendChild segment-list segment)))
+        comment-string (.-value (.getElementById js/document "comment"))
+        td-bearing (.createElement js/document "td")
+        td-paces (.createElement js/document "td")
+        td-comment (.createElement js/document "td")]
+    (set! (.-innerHTML td-bearing) bearing)
+    (set! (.-innerHTML td-paces) paces)
+    (set! (.-innerHTML td-comment) comment-string)
+    (.appendChild segment td-bearing)
+    (.appendChild segment td-paces)
+    (.appendChild segment  td-comment)
+    (.appendChild segment-list segment)
+    (set! (.-value (.getElementById js/document "comment")) "")))
 
 (set! (.-onclick (.getElementById js/document "bearing-dec-30")) #(set-bearing -30))
 (set! (.-onclick (.getElementById js/document "bearing-dec-5")) #(set-bearing -5))
