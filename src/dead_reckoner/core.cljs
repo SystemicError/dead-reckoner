@@ -29,16 +29,25 @@
         {:bearing bearing
          :paces paces}))))
 
+(defn update-map [xs ys]
+  "Given lists of xs and ys, draw a map of the route."
+  (let [map-canvas (.getElementById js/document "map")]
+    )
+  )
+
 (defn update-navigation [segments]
   "Update the navigation readouts based on segment data."
   (let [total-paces (reduce + (map :paces segments))
-        y (reduce + (map #(* (Math/cos (/ (* Math/PI (:bearing %)) 180.0)) (:paces %)) segments))
-        x (reduce + (map #(* (Math/sin (/ (* Math/PI (:bearing %)) 180.0)) (:paces %)) segments))
+        ys (map #(* (Math/cos (/ (* Math/PI (:bearing %)) 180.0)) (:paces %)) segments)
+        y (reduce + ys)
+        xs (map #(* (Math/sin (/ (* Math/PI (:bearing %)) 180.0)) (:paces %)) segments)
+        x (reduce + xs)
         distance-to-start (Math/sqrt (+ (* x x) (* y y)))
         bearing-to-start (mod (+ 180.0 (/ (* 180.0 (Math/atan2 x y)) Math/PI)) 360)]
     (set! (.-innerHTML (.getElementById js/document "total-paces")) (str "Total paces:  " total-paces))
     (set! (.-innerHTML (.getElementById js/document "distance-to-start")) (str "Straight-line distance to start:  " distance-to-start))
     (set! (.-innerHTML (.getElementById js/document "bearing-to-start")) (str "Bearing to starting position:  " bearing-to-start))
+    (update-map xs ys)
   ))
 
 (defn add-segment []
