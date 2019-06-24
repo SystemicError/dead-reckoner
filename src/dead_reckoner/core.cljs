@@ -39,11 +39,15 @@
   ([xs ys] (update-map xs ys 0 0))
   ([xs ys x y]
     (let [map-canvas (.getElementById js/document "map")
+          w (.-width map-canvas)
+          h (.-height map-canvas)
+          center-x (/ w 2)
+          center-y (/ h 2)
           ctx (.getContext map-canvas "2d")]
       (if (not (empty? xs))
         (do
-          (.moveTo ctx x y)
-          (.lineTo ctx (+ x (first xs)) (+ y (first ys)))
+          (.moveTo ctx (- center-x x) (- center-y y))
+          (.lineTo ctx (- center-x x (first xs)) (- center-y y (first ys)))
           (.stroke ctx)
           (recur (rest xs) (rest ys) (+ x (first xs)) (+ y (first ys))))))))
 
