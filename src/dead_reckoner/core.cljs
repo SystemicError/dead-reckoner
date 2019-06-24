@@ -21,7 +21,7 @@
 
 (defn read-segments []
   "Returns a list of all segments"
-  (let [segment-list (.-innerHTML (.getElementById js/document "segment-list"))
+  (let [segment-list (.-value (.getElementById js/document "segment-list"))
         lines (str/split-lines segment-list)]
     (for [line lines]
       (let [fields (str/split (str/trim line) #"\t")
@@ -63,7 +63,7 @@
   ))
 
 (defn add-segment []
-  (let [segment-list (.-innerHTML (.getElementById js/document "segment-list"))
+  (let [segment-list (.-value (.getElementById js/document "segment-list"))
         bearing (.-value (.getElementById js/document "bearing"))
         paces (.-value (.getElementById js/document "paces"))
         comment-string (.-value (.getElementById js/document "comment"))
@@ -71,7 +71,7 @@
         new-segment-list (if (empty? segment-list)
                            entry
                            (str segment-list "\n" entry))]
-    (set! (.-innerHTML (.getElementById js/document "segment-list")) new-segment-list)
+    (set! (.-value (.getElementById js/document "segment-list")) new-segment-list)
     (update-navigation (read-segments))))
 
 (defn load-segment-file []
@@ -100,3 +100,6 @@
 
 (set! (.-onclick (.getElementById js/document "load-segment-file")) load-segment-file)
 (set! (.-onclick (.getElementById js/document "save-segment-file")) save-segment-file)
+
+(set! (.-oninput (.getElementById js/document "segment-list")) #(update-navigation (read-segments)))
+;(set! (.-oninput (.getElementById js/document "segment-list")) #(js/alert "Edited!"))
