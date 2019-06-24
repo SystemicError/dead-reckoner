@@ -1,4 +1,5 @@
-(ns dead-reckoner.core)
+(ns dead-reckoner.core
+  (:require [clojure.string :as str]))
 
 (println "Program started.")
 
@@ -20,13 +21,15 @@
 
 (defn read-segments []
   "Returns a list of all segments"
-  (let [segment-list (.-children (.getElementById js/document "segment-list"))]
-    (for [i (range 1 (.-length segment-list))]
-      (let [segment (.item segment-list i)
-            children (.-children segment)
-            bearing (js/parseInt (.-innerHTML (.item children 0)))
-            paces (js/parseInt (.-innerHTML (.item children 1)))
-            comment-str (.-innerHTML (.item children 2))]
+  (let [segment-list (.-innerHTML (.getElementById js/document "segment-list"))
+        lines (str/split-lines segment-list)]
+    (for [line lines]
+      (let [fields (str/split (str/trim line) #"\t")
+            bearing (js/parseInt (nth fields 0))
+            paces (js/parseInt (nth fields 1))
+            comment-str (if (< 2 (count fields))
+                          (nth fields 2)
+                          "")]
         {:bearing bearing
          :paces paces
          :comment comment-str}))))
@@ -60,22 +63,15 @@
   ))
 
 (defn add-segment []
-  (let [segment-list (.getElementById js/document "segment-list")
-        segment (.createElement js/document "tr")
+  (let [segment-list (.-innerHTML (.getElementById js/document "segment-list"))
         bearing (.-value (.getElementById js/document "bearing"))
         paces (.-value (.getElementById js/document "paces"))
         comment-string (.-value (.getElementById js/document "comment"))
-        td-bearing (.createElement js/document "td")
-        td-paces (.createElement js/document "td")
-        td-comment (.createElement js/document "td")]
-    (set! (.-innerHTML td-bearing) bearing)
-    (set! (.-innerHTML td-paces) paces)
-    (set! (.-innerHTML td-comment) comment-string)
-    (.appendChild segment td-bearing)
-    (.appendChild segment td-paces)
-    (.appendChild segment  td-comment)
-    (.appendChild segment-list segment)
-    (set! (.-value (.getElementById js/document "comment")) "")
+        entry (str bearing "\t" paces "\t" comment-string)
+        new-segment-list (if (empty? segment-list)
+                           entry
+                           (str segment-list "\n" entry))]
+    (set! (.-innerHTML (.getElementById js/document "segment-list")) new-segment-list)
     (update-navigation (read-segments))))
 
 (defn load-segment-file []
