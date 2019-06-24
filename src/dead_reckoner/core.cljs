@@ -25,9 +25,11 @@
       (let [segment (.item segment-list i)
             children (.-children segment)
             bearing (js/parseInt (.-innerHTML (.item children 0)))
-            paces (js/parseInt (.-innerHTML (.item children 1)))]
+            paces (js/parseInt (.-innerHTML (.item children 1)))
+            comment-str (.-innerHTML (.item children 2))]
         {:bearing bearing
-         :paces paces}))))
+         :paces paces
+         :comment comment-str}))))
 
 (defn update-map
   "Given lists of xs and ys, draw a map of the route."
@@ -76,6 +78,16 @@
     (set! (.-value (.getElementById js/document "comment")) "")
     (update-navigation (read-segments))))
 
+(defn load-segment-file []
+  "Loads a file specified by client."
+  (js/alert "Sorry, loading saves not implemented yet.")
+  )
+
+(defn save-segment-file []
+  "Saves segment list to client's computer."
+  (js/alert "Sorry, saves not implemented yet.")
+  )
+
 (set! (.-onclick (.getElementById js/document "bearing-dec-30")) #(set-bearing -30))
 (set! (.-onclick (.getElementById js/document "bearing-dec-5")) #(set-bearing -5))
 (set! (.-onclick (.getElementById js/document "bearing-inc-5")) #(set-bearing 5))
@@ -89,3 +101,6 @@
 (set! (.-onclick (.getElementById js/document "paces-inc-100")) #(set-paces 100))
 
 (set! (.-onclick (.getElementById js/document "add-segment")) add-segment)
+
+(set! (.-onclick (.getElementById js/document "load-segment-file")) load-segment-file)
+(set! (.-onclick (.getElementById js/document "save-segment-file")) save-segment-file)
