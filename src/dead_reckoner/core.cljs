@@ -85,8 +85,8 @@
 
 (defn save-segment-file []
   "Saves segment list to client's computer."
-  (js/alert "Sorry, saves not implemented yet.")
-  )
+  (let [segments (read-segments)]
+    (js/alert "Sorry, saves not implemented yet.")))
 
 (set! (.-onclick (.getElementById js/document "bearing-dec-30")) #(set-bearing -30))
 (set! (.-onclick (.getElementById js/document "bearing-dec-5")) #(set-bearing -5))
