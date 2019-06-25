@@ -34,22 +34,41 @@
          :paces paces
          :comment comment-str}))))
 
-(defn update-map
-  "Given lists of xs and ys, draw a map of the route."
-  ([xs ys] (update-map xs ys 0 0))
-  ([xs ys x y]
-    (let [map-canvas (.getElementById js/document "map")
-          w (.-width map-canvas)
-          h (.-height map-canvas)
-          center-x (/ w 2)
-          center-y (/ h 2)
-          ctx (.getContext map-canvas "2d")]
-      (if (not (empty? xs))
-        (do
-          (.moveTo ctx (- center-x x) (- center-y y))
-          (.lineTo ctx (- center-x x (first xs)) (- center-y y (first ys)))
-          (.stroke ctx)
-          (recur (rest xs) (rest ys) (+ x (first xs)) (+ y (first ys))))))))
+(defn deltas-to-waypoints [xs ys]
+  "Takes in vectors between waypoints and returns waypoints as absolute coordinates."
+  (for [i (range (inc (count xs)))]
+    {:x (reduce + (take i xs))
+     :y (reduce + (take i ys))}))
+
+(defn transform-waypoints [waypoints screen-center map-center zoom]
+  "Transform waypoints to appear correctly on canvas."
+  (for [waypoint waypoints]
+    {:x (+ (:x screen-center) (* zoom (- (:x waypoint) (:x map-center))))
+     :y (- (:y screen-center) (* zoom (- (:y waypoint) (:y map-center))))}))
+
+(defn draw-path [ctx waypoints]
+  "Given scaled waypoints and 2d context, draw path."
+  (if (> (count waypoints) 1)
+    (do
+      (.moveTo ctx (:x (first waypoints)) (:y (first waypoints)))
+      (.lineTo ctx (:x (nth waypoints 1)) (:y (nth waypoints 1)))
+      (.stroke ctx)
+      (recur ctx (rest waypoints)))))
+
+;   set bg, draw-path
+
+(defn update-map [xs ys]
+  "Update map of the route."
+  (let [map-canvas (.getElementById js/document "map")
+        w (.-width map-canvas)
+        h (.-height map-canvas)
+        screen-center {:x (/ w 2) :y (/ h 2)}
+        ctx (.getContext map-canvas "2d")
+        waypoints (deltas-to-waypoints xs ys)
+        map-center {:x 0 :y 0}
+        zoom 2.0
+        transformed (transform-waypoints waypoints screen-center map-center zoom)]
+    (draw-path ctx transformed)))
 
 (defn update-navigation [segments]
   "Update the navigation readouts based on segment data."
