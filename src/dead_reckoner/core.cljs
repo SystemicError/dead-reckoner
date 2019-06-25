@@ -54,6 +54,7 @@
   "Given scaled waypoints and 2d context, draw path."
   (if (> (count waypoints) 1)
     (do
+      (.beginPath ctx)
       (.moveTo ctx (:x (first waypoints)) (:y (first waypoints)))
       (.lineTo ctx (:x (nth waypoints 1)) (:y (nth waypoints 1)))
       (.stroke ctx)
