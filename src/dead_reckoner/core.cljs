@@ -60,15 +60,18 @@
 (defn update-map [xs ys]
   "Update map of the route."
   (let [map-canvas (.getElementById js/document "map")
+        zoom-slider (.getElementById js/document "zoom")
+        zoom (Math/pow 1.1 (.-value zoom-slider))
         w (.-width map-canvas)
         h (.-height map-canvas)
         screen-center {:x (/ w 2) :y (/ h 2)}
         ctx (.getContext map-canvas "2d")
         waypoints (deltas-to-waypoints xs ys)
         map-center {:x 0 :y 0}
-        zoom 2.0
         transformed (transform-waypoints waypoints screen-center map-center zoom)]
-    (draw-path ctx transformed)))
+    (do
+      (.clearRect ctx 0 0 w h)
+      (draw-path ctx transformed))))
 
 (defn update-navigation [segments]
   "Update the navigation readouts based on segment data."
@@ -121,8 +124,10 @@
 
 (set! (.-onclick (.getElementById js/document "add-segment")) add-segment)
 
+(set! (.-oninput (.getElementById js/document "zoom")) #(update-navigation (read-segments)))
+
 (set! (.-onclick (.getElementById js/document "load-segment-file")) load-segment-file)
 (set! (.-onclick (.getElementById js/document "save-segment-file")) save-segment-file)
 
 (set! (.-oninput (.getElementById js/document "segment-list")) #(update-navigation (read-segments)))
-;(set! (.-oninput (.getElementById js/document "segment-list")) #(js/alert "Edited!"))
+
