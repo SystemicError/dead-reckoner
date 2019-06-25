@@ -9,23 +9,21 @@
   <body style="background-color:#CCCCCC">
 
     <div id="bearing-div" align="center">
-      <button id="bearing-dec-30">-30</button>
-      <button id="bearing-dec-5">-5</button>
-      <input type="number" id="bearing" min="0" max="360" value="0">
-      <button id="bearing-inc-5">+5</button>
-      <button id="bearing-inc-30">+30</button>
+      <button id="bearing-dec">-1</button>
+      <input type="range" id="bearing" min="0" max="360" value="0">
+      <button id="bearing-inc">+1</button><br>
+      <p id="bearing-text"></p>
     </div>
     <div id="compass-div" align="center">
       <img src="compass.png" id="compass-img">
     </div>
     <div id="paces-div" align="center">
-      <button id="paces-dec-100">-100</button>
       <button id="paces-dec-10">-10</button>
       <button id="paces-dec-1">-1</button>
-      <input type="number" id="paces" min="1" max="99999" value="0">
+      <input type="range" id="paces" min="1" max="1000" value="0">
       <button id="paces-inc-1">+1</button>
       <button id="paces-inc-10">+10</button>
-      <button id="paces-inc-100">+100</button>
+      <p id="paces-text"></p>
     </div>
     <div id="add-segment-div" align="center">
       <p>Comment:<input type="text" id="comment"></p>

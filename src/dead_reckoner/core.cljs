@@ -9,15 +9,19 @@
 
 (defn set-bearing [delta]
   (let [bearing (.getElementById js/document "bearing")
-        new-value (mod (+ (js/parseInt (.-value bearing)) delta) 360)]
+        new-value (mod (+ (js/parseInt (.-value bearing)) delta) 360)
+        bearing-text (.getElementById js/document "bearing-text")]
     (set! (.-value bearing) new-value)
+    (set! (.-innerHTML bearing-text) (str new-value "\u00B0"))
     (rotate-compass new-value)
     ))
 
 (defn set-paces [delta]
   (let [paces (.getElementById js/document "paces")
-        new-value (max (+ (js/parseInt (.-value paces)) delta) 0)]
-    (set! (.-value paces) new-value)))
+        new-value (max (+ (js/parseInt (.-value paces)) delta) 0)
+        paces-text (.getElementById js/document "paces-text")]
+    (set! (.-value paces) new-value)
+    (set! (.-innerHTML paces-text) (str new-value " paces"))))
 
 (defn read-segments []
   "Returns a list of all segments"
@@ -43,7 +47,7 @@
 (defn transform-waypoints [waypoints screen-center map-center zoom]
   "Transform waypoints to appear correctly on canvas."
   (for [waypoint waypoints]
-    {:x (+ (:x screen-center) (* zoom (- (:x waypoint) (:x map-center))))
+    {:x (- (:x screen-center) (* zoom (- (:x waypoint) (:x map-center))))
      :y (- (:y screen-center) (* zoom (- (:y waypoint) (:y map-center))))}))
 
 (defn draw-path [ctx waypoints]
@@ -110,17 +114,15 @@
   (let [segments (read-segments)]
     (js/alert "Sorry, saves not implemented yet.")))
 
-(set! (.-onclick (.getElementById js/document "bearing-dec-30")) #(set-bearing -30))
-(set! (.-onclick (.getElementById js/document "bearing-dec-5")) #(set-bearing -5))
-(set! (.-onclick (.getElementById js/document "bearing-inc-5")) #(set-bearing 5))
-(set! (.-onclick (.getElementById js/document "bearing-inc-30")) #(set-bearing 30))
+(set! (.-onclick (.getElementById js/document "bearing-dec")) #(set-bearing -1))
+(set! (.-oninput (.getElementById js/document "bearing")) #(set-bearing 0))
+(set! (.-onclick (.getElementById js/document "bearing-inc")) #(set-bearing 1))
 
-(set! (.-onclick (.getElementById js/document "paces-dec-100")) #(set-paces -100))
 (set! (.-onclick (.getElementById js/document "paces-dec-10")) #(set-paces -10))
 (set! (.-onclick (.getElementById js/document "paces-dec-1")) #(set-paces -1))
+(set! (.-oninput (.getElementById js/document "paces")) #(set-paces 0))
 (set! (.-onclick (.getElementById js/document "paces-inc-1")) #(set-paces 1))
 (set! (.-onclick (.getElementById js/document "paces-inc-10")) #(set-paces 10))
-(set! (.-onclick (.getElementById js/document "paces-inc-100")) #(set-paces 100))
 
 (set! (.-onclick (.getElementById js/document "add-segment")) add-segment)
 
