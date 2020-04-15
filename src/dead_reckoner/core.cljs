@@ -115,6 +115,16 @@
   (let [segments (read-segments)]
     (js/alert "Sorry, saves not implemented yet.")))
 
+(defn get-orientation [event]
+  (let [alpha (.-alpha event)
+        bearing (.getElementById js/document "bearing")
+        bearing-text (.getElementById js/document "bearing-text")]
+    (if (not= nil alpha)
+      (do
+        (rotate-compass alpha)
+        (set! (.-value bearing) alpha)
+        (set! (.-innerHTML bearing-text) (str alpha "\u00B0"))))))
+
 (set! (.-onclick (.getElementById js/document "bearing-dec")) #(set-bearing -1))
 (set! (.-oninput (.getElementById js/document "bearing")) #(set-bearing 0))
 (set! (.-onclick (.getElementById js/document "bearing-inc")) #(set-bearing 1))
@@ -134,3 +144,4 @@
 
 (set! (.-oninput (.getElementById js/document "segment-list")) #(update-navigation (read-segments)))
 
+(.addEventListener js/window "deviceorientation" get-orientation)
